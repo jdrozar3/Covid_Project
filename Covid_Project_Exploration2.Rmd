@@ -1,0 +1,92 @@
+---
+title: "Covid Project Exploration 2"
+output: html_notebook
+---
+
+Import all the data into R using the raw github data. 
+Note: commands don't work, I had to manually import the data.
+
+```{r}
+# library(readr)
+# FALL_20_20dataChunk <- read_csv("https://raw.githubusercontent.com/jdrozar3/Covid_Project/Exploration-2/FALL%20-%20dataChunk.csv")
+#View(FALL_20_20dataChunk)
+FALL_20_20dataChunk
+
+# library(readr)
+# SPRING_20_20dataChunk <- read_csv("https://raw.githubusercontent.com/jdrozar3/Covid_Project/Exploration-2/SPRING%20-%20dataChunk.csv")
+# View(SPRING_20_20dataChunk)
+SPRING_20_20dataChunk
+
+# library(readr)
+# SUMMER_20_20dataChunk <- read_csv("https://raw.githubusercontent.com/jdrozar3/Covid_Project/Exploration-2/SUMMER%20-%20dataChunk.csv")
+# View(SUMMER_20_20dataChunk)
+SUMMER_20_20dataChunk
+
+# library(readr)
+# WINTER_20_20Incomplete_20Season_20_20dataChunk <- read_csv("https://raw.githubusercontent.com/jdrozar3/Covid_Project/Exploration-2/WINTER%20-%20Incomplete%20Season%20-%20dataChunk.csv")
+# View(WINTER_20_20Incomplete_20Season_20_20dataChunk)
+WINTER_20_20Incomplete_20Season_20_20dataChunk
+```
+
+
+For each season, get the average for each day.
+
+```{r}
+average_season <- function(data) {
+  days <- data[5:dim(data)[2]];
+  names <- c();
+  names <- names(days);
+  average <- c();
+  
+  for (i in 1:dim(days)[2]) {
+    name <- names[i];
+    average <- c(average, mean(days[i][[name]]));
+  }
+  return(average);
+}
+
+get_dates <- function(data) {
+  days <- data[5:dim(data)[2]];
+  return(names(days))
+}
+
+fall <- average_season(FALL_20_20dataChunk);
+fall_dates <- get_dates(FALL_20_20dataChunk);
+fall
+
+spring <- average_season(SPRING_20_20dataChunk);
+spring_dates <- get_dates(SPRING_20_20dataChunk);
+spring
+
+summer <- average_season(SUMMER_20_20dataChunk);
+summer_dates <- get_dates(SUMMER_20_20dataChunk);
+summer
+
+winter <- average_season(WINTER_20_20Incomplete_20Season_20_20dataChunk);
+winter_dates <- get_dates(WINTER_20_20Incomplete_20Season_20_20dataChunk);
+winter
+
+# FALL_2020 <- FALL_20_20dataChunk[5:dim(FALL_20_20dataChunk)[2]];
+# names <- c();
+# names <- names(FALL_2020);
+# for (i in 1:dim(FALL_2020)[2]) {
+#  name <- names[i];
+#  fall <- c(fall, mean(FALL_2020[i][[name]]));
+# }
+# fall
+```
+
+
+Make line graphs for each season.
+Note: the winter include both the start and end of 2020.
+
+``` {r}
+plot(fall~as.Date(fall_dates,"%m/%d/%Y"), type = "l", main = "Daily average cases for Fall 2020 season", xlab = "Date", ylab = "Number of cases")
+
+plot(spring~as.Date(spring_dates,"%m/%d/%Y"), type = "l", main = "Daily average cases for Spring 2020 season", xlab = "Date", ylab = "Number of cases")
+
+plot(summer~as.Date(summer_dates,"%m/%d/%Y"), type = "l", main = "Daily average cases for Summer 2020 season", xlab = "Date", ylab = "Number of cases")
+
+plot(winter~as.Date(winter_dates,"%m/%d/%Y"), type = "p", main = "Daily average cases for Winter 2020 season", xlab = "Date", ylab = "Number of cases")
+```
+
