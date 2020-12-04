@@ -3,9 +3,9 @@
 ## Exploration 3 (Differences in total cases and confirmed case rates by continent)
 
 Collab:
-<li>Kaitlyn Won</li>
-<li>Jyoti Michael D Rozario</li>
-<li>BaoLong Nguyen</li>
+<li>Kaitlyn Won (Data Processing for Confirmed Case Rates / Data Visualization)</li>
+<li>Jyoti Michael D Rozario (Data Proecessing for Total Cases)</li>
+<li>BaoLong Nguyen (Data Analysis)</li>
 
 <br></br>
 The data has been refined and sorted by continents
