@@ -1,0 +1,112 @@
+---
+title: "Country GDP vs COVID-19 Data"
+author: "John Koenig, Andrew Sumner, and Martin Jauquet  (Group 3, Exploration 4)"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes  
+  pdf_document:
+    toc: yes
+---
+
+# Getting the Data
+
+This script will download coronavirus source data from ourworldindata.org and it will prepare the dataset for analysis
+
+```{r}
+data_source <- "https://covid.ourworldindata.org/data/owid-covid-data.csv"
+
+print(paste("Loading data from -- ", data_source, sep=" "))
+df <- read.csv(data_source)
+
+# Select Today's Data
+print(paste("Selecting today's data  -- ", Sys.Date(), sep=" "))
+df_today <- df[df$date == Sys.Date(),]
+
+# Select Columns
+selected_vars <- c("iso_code", 
+                   "continent", 
+                   "location", 
+                   "date", 
+                   "total_cases", 
+                   "total_deaths", 
+                   "total_cases_per_million", 
+                   "total_deaths_per_million", 
+                   "population", 
+                   "population_density", 
+                   "median_age", 
+                   "aged_65_older", 
+                   "aged_70_older", 
+                   "gdp_per_capita", 
+                   "extreme_poverty", 
+                   "cardiovasc_death_rate", 
+                   "diabetes_prevalence", 
+                   "female_smokers", 
+                   "male_smokers", 
+                   "handwashing_facilities", 
+                   "hospital_beds_per_thousand", 
+                   "life_expectancy", 
+                   "human_development_index")
+
+df_out <- df_today[selected_vars]
+
+# Save Processed Data to CSV File
+save_filepath <- paste(getwd(), "COVIDvsGDP_processed_v2.csv", sep="/")
+print(paste("Saving processed data  -- ", save_filepath, sep=" "))
+write.csv(df_out, save_filepath, row.names = FALSE)
+```
+
+# Visualizing the Data
+We decided to look at total cases per million, total deaths per million, total cases, and total deaths for each country in our dataset. We compared these categories with GDP to determine if there was any relationship.
+
+```{r}
+load_path <- paste(getwd(), "COVIDvsGDP_processed_v1.csv", sep="/")
+
+print(paste("Loading data from -- ", load_path, sep=" "))
+df <- read.csv(load_path)
+head(df)
+```
+
+```{r}
+x = df$gdp_per_capita
+y1 = df$total_cases_per_million
+y2 = df$total_deaths_per_million
+y3 = df$total_cases #probably not relevant, we should use the proportion of cases relative to overall population, i.e. y1
+y4 = df$total_deaths #probably not relevant, we should use the proportion of deaths relative to overall population, i.e. y2
+```
+
+```{r}
+cor(x, y1, use = "complete.obs")
+cor(x, y2, use = "complete.obs")
+cor(x, y3, use = "complete.obs") #probably not relevant but included for completeness
+cor(x, y4, use = "complete.obs") #same
+```
+
+```{r}
+# Plot 1
+plot(x, y1, main = paste("GDP vs Cases per million people"))
+abline(lm(y1~x))
+
+# Plot 2
+plot(x, y2, main = paste("GDP vs Deaths per million people"))
+abline(lm(y2~x))
+
+# Plot 3
+plot(x, y3, main = paste("GDP vs Total COVID-19 Cases"))
+abline(lm(y3~x))
+
+# Plot 4
+plot(x, y4, main = paste("GDP vs Total COVID-19 Deaths"))
+abline(lm(y4~x))
+```
+
+
+# Analysis
+We gathered data for the GDP of each country in the COVID database and compared the GDP of the country to the number of deaths and cases they had. After doing some data visualization, we can conclude that there is little to no correlation between the GDP of a country and the number of COVID-19 cases or number of deaths due to COVID-19. For example, the correlation coefficient between GDP and COVID-19 cases per million is 0.52. The correlation coefficient for our other comparisons are all less than .25, signifying that there is little relation between the two. Furthermore, you can see the points are very spread out and have little relation (Plots 1-4). It is surprising because we expected some relationship; either those with lower GDP's would have more cases since their health care isn't as developed or those with higher GDP's would have more cases since there are more people in those countries.
+
+GDP vs …	            Correlation Coefficient  
+Cases per million:        0.5199979  
+Deaths per million:       0.2420518  
+Total Cases:              0.0186152  
+Total Deaths:             0.0097293  
+
