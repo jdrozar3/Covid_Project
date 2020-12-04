@@ -39,6 +39,7 @@ total_cases = c(africa_total_cases/total_cases_sum, asia_total_cases/total_cases
 continents = c("Africa", "Asia", "Australia", "Europe", "NA", "SA")
 barplot(total_cases, main="Relative Frequency of Total Confirmed Cases by Continent",names.arg=continents, ylim=c(0,0.3))
 ```
+The first set of data depicts the distribution of Covid cases across different continents. This was done by calculating the total cases in one continent and dividing it by the total count of Covid cases globally. From this, we can observe that Asia has the highest amount of cases, making up 28.86 percent of the globe's total cases. We can also observe that Europe, North America, and South America, all have similar amounts of cases, making up 21.96 percent, 23.36 percent, and 21.96 percent of total global cases, respectively. Africa and Australia contribute significantly less to global Covid cases with Africa making up 3.78 percent and Australia making up 0.06 percent. From this data, we can conclude that Asia, Europe, North America, and South America have been the major  contributors to the total cases during the coronavirus pandemic, most likely because the virus originated in China and these continents generally have more contact with Asia. 
 
 # Data Analysis: Total Confirmed Cases by Continent
 
@@ -106,6 +107,20 @@ create_ts_plot(asia_ts)
 create_ts_plot(europe_ts)
 create_ts_plot(oceania_ts)
 ```
+
+Next, we plotted the Covid cases of each continent with respect to time to visualize how Covid cases have grown during the pandemic. As mentioned before, the Americas, Asia, and Europe have much more cases than Australia and Africa. However, each continent is unique in its pattern of growth of Covid cases. 
+
+Africa’s growth was slow during the beginning of the pandemic in early April to May, but cases began exponentially increasing from May to August.  Since then, Africa’s Covid cases have been rising relatively linearly. 
+	
+The America’s growth of Covid cases has been relatively linear throughout the pandemic. Cases began growing in late March and have continued to grow without resistance.
+	
+Asia’s cases also began slowly in late March. From April to October, Asia has seen an exponential growth in cases. However starting in October, Asia’s cases began growing linearly. 
+	
+Covid cases in Europe began growing much earlier than the other continents, starting in mid-March. From then to July, cases in Europe have been growing linearly in a slower rate than Asia and the Americas. However, from July to present, Europe’s cases have continued to grow exponentially. 
+	
+Australia’s cases also began early with a its own large spike starting in mid-March and lasting until mid-April. Then from mid-April to July, cases have seen little growth, remaining fairly constant. Australia then experienced a second larger spike from July to September, but since then, Covid cases have slowed.
+	
+From this part of the data, we can observe how Covid cases have grown overtime. It’s noteworthy that cases in each continent all began growing in mid to late March. Asia, Africa, and the Americas have experienced fairly linear growth, while Europe is experiencing exponential growth and Australia has experienced two major spikes in cases. We can observe that with Australia being the exception, each continent has seen little resistance in Covid growth, with cases either growing linearly or exponentially. 
 
 # Data Analysis: Covid Rate by Continent
 
