@@ -1,6 +1,6 @@
 # Covid_Project
 
-## Exploration 3 (Differences in rates or activeness of the virus by continent)
+## Exploration 3 (Differences in total cases and case rates by continent)
 
 Collab:
 <li>Kaitlyn Won</li>
