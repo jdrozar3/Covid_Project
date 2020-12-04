@@ -1,6 +1,6 @@
 ---
 title: "Covid Project Group 3 Exploration 3: Counts and Rates by Continent"
-author: "Kaitlyn Won, Jyoti Michael D Rozario, BaoLong Nguyen"
+author: "Kaitlyn Won (Data Processing for Rates/Visualization), Jyoti Michael D Rozario (Data Processing for Counts), BaoLong Nguyen (Data Analysis)"
 output:
   html_document:
     number_sections: yes
@@ -8,9 +8,10 @@ output:
   pdf_document:
     toc: yes
 ---
-# Data Processing
+```{r setup, warning=FALSE}
+```
 
-# Data Visualization: Total Confirmed Cases by Continent
+# Data Processing/Visualization: Total Confirmed Cases by Continent
 Read in all the csv files per continent.
 ```{r}
 africa = read.csv("refined_data_Africa.csv")
@@ -32,13 +33,81 @@ sa_total_cases = sum(south_america$Total.Confirmed.Cases)
 total_cases_sum = africa_total_cases + asia_total_cases + australia_total_cases + europe_total_cases + na_total_cases + sa_total_cases
 ```
 
-Plotted the total counts of the confirmed cases
+Plotted the relative frequencies of the total counts of the confirmed cases
 ```{r}
 total_cases = c(africa_total_cases/total_cases_sum, asia_total_cases/total_cases_sum, australia_total_cases/total_cases_sum, europe_total_cases/total_cases_sum, na_total_cases/total_cases_sum, sa_total_cases/total_cases_sum)
 continents = c("Africa", "Asia", "Australia", "Europe", "NA", "SA")
 barplot(total_cases, main="Relative Frequency of Total Confirmed Cases by Continent",names.arg=continents, ylim=c(0,0.3))
 ```
 
-# Data Visualization: Change in Activeness Rates by Continent
+# Data Analysis: Total Confirmed Cases by Continent
+
+# Data Processing/Visualization: Covid Rate by Continent
+
+Installed/added necessary packages and csv file. Notably, the countrycode package is necessary to map countries to continents since this information isn't included in the time series csv. 
+```{r}
+library(ggplot2)
+library(dplyr)
+library(remotes) # do install.packages("remotes") if error
+# below comment is for countrycode package installation 
+# install_github('vincentarelbundock/countrycode') 
+library(countrycode)
+
+ts = read.csv("time_series_covid19_confirmed_global.csv")
+```
+
+Grouped data by continent (note that the countrycode package groups North and South America as the Americas) and sum each day's covid confirmation case counts per country. Plotted these counts. 
+```{r}
+ts$Continent = countrycode(ts$Country.Region, "country.name", "continent")
+
+# Had to manually add continents for the few that did not map. Diamond Princess is not a country; it is a 
+# cruise ship that was docked in Yokohama, Japan when the coronavirus outbreak happened within the vessel.
+# Similarly, MS Zaandam is a cruise ship that was near Panama City when the outbreak happened. 
+# Kosovo is a country in Europe.
+ts$Continent[which(ts$Country.Region == "Diamond Princess")] = "Asia"
+ts$Continent[which(ts$Country.Region == "MS Zaandam")] = "Americas"
+ts$Continent[which(ts$Country.Region == "Kosovo")] = "Europe"
+
+ts = select(ts, -c(Province.State, Country.Region, Lat, Long))
+
+ts_by_conts = ts %>% group_by(Continent) %>% summarise_each(funs(sum))
+```
+Time series all split by continent in separate variables
+```{r}
+africa_ts = ts_by_conts[ts_by_conts$Continent == "Africa",]
+americas_ts = ts_by_conts[ts_by_conts$Continent == "Americas",]
+asia_ts = ts_by_conts[ts_by_conts$Continent == "Asia",]
+europe_ts = ts_by_conts[ts_by_conts$Continent == "Europe",]
+oceania_ts = ts_by_conts[ts_by_conts$Continent == "Oceania",]
+```
+
+Function to plot time series by continent 
+```{r}
+library(rlist)
+
+create_ts_plot <- function(ts) {
+  dates = seq(as.Date("2020/1/22"), by="day", length.out = ncol(ts) - 1)
+  counts = rep(0, ncol(ts) - 1)
+  c = 0
+  for (i in colnames(ts)) {
+    counts[c] = as.integer(ts[[paste(i)]])
+    c = c + 1
+  }
+  df = data.frame(date = dates, count = counts)
+  ggplot(data = df, aes(date, count)) + geom_line()
+}
+```
+
+Use create_ts_plot function plot time series for each continent's confirmed covid cases
+```{r}
+create_ts_plot(africa_ts)
+create_ts_plot(americas_ts)
+create_ts_plot(asia_ts)
+create_ts_plot(europe_ts)
+create_ts_plot(oceania_ts)
+```
+
+# Data Analysis: Covid Rate by Continent
+
 
 
