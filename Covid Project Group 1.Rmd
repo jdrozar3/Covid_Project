@@ -1,0 +1,257 @@
+---
+title: "Covid Project Group 1: Hospitalization Rate Vs. Case Fatality Ratio"
+author: "Nick Schaap, Stephen Duffy, Chris Emm"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes  
+  pdf_document:
+    toc: yes
+---
+## Data Processing (Nick Schapp)
+# See csv file
+
+## Data visualization (Stephen Duffy)
+
+```{r}
+data = read.csv("covid_data_group1.csv");
+```
+
+# Get state abbreviations represented in data
+```{r}
+state_abbr <- function() {
+  abbreviations <- c();
+  
+  for(i in 1:nrow(data)) {
+    abbreviations <- append(abbreviations, data[i,2]);
+  }
+  
+  return(unique(abbreviations))
+}
+
+states <- state_abbr();
+```
+
+# Read data by state and clean input
+```{r}
+data_by_state <- function(tgt_state) {
+  dat <- c();
+  pos <- c();
+  hos <- c();
+  dea <- c();
+  flag = 0;
+
+  for(i in 1:nrow(data)) {
+    if(is.na(data[i, 1]) || is.na(data[i, 2]) || is.na(data[i, 3]) || is.na(data[i, 4]) || is.na(data[i, 5])) {
+      next;
+    }
+      
+    date_str = data[i,1]; 
+    clean_date <- paste(substr(date_str, 0, 4), substr(date_str, 5, 6), substr(date_str, 7, 8), sep="-");
+    
+    state = data[i, 2];
+    positive = strtoi(data[i, 3]);
+    hospitalized = strtoi(data[i, 4]);
+    deaths = strtoi(data[i, 5]);
+    
+    if (all(state == tgt_state)) {
+      flag = 1;
+      dat <- append(dat, clean_date);
+      pos <- append(pos, positive);
+      hos <- append(hos, hospitalized);
+      dea <- append(dea, deaths);
+    }
+    else {
+      if(flag == 1) { break; } else { next; }
+    }
+  }
+
+  out <- data.frame(
+    dates = as.Date(dat),
+    positives = pos,
+    hospitalized = hos,
+    deaths = dea
+  ); 
+ 
+  # reorder so dates are in ascending order
+  sorted_out <- out[order(out$dates),]
+  
+  return(sorted_out); 
+}
+
+```
+
+# Plot the ratio for each given region. 
+```{r}
+plot_region <- function(regional_states) {
+  first_data = data_by_state(regional_states[2]);
+  
+  x <- first_data[,3]
+  y <- first_data[,4]
+  
+  plot(x,
+       y,
+       type = "p",
+       lwd = 2,
+       col = "#000000",
+       xlab = "Hospitalizations",
+       ylab = "Deaths", 
+       main = regional_states[1])
+  
+  colors <- c("#000000");
+  
+  if(length(regional_states) == 1) {
+    return();
+  }
+  
+  for(state in regional_states) {
+    if(nchar(state) > 2 ) { next; }
+    color_new <- rgb(runif(5),runif(5),runif(5));
+    colors <- append(colors, color_new);
+    print(paste("Plotting ", state));
+    data_here <- data_by_state(state);
+    
+    # NOTE HERE DATA COULD BE INVALID
+    if(is.null(dim(data_here)) || dim(data_here) < 4) { print(paste("Plotting failed due to missing data for:", state)); next; }
+    
+    #try(lines(data_here[,3], data_here[,4], type = "l", lwd = 2, col=color_new))
+    color_new = "";
+  }
+  
+  # Adds line for correlation coefficient to our plot
+  mod = lm(y~x)
+  abline(mod$coefficients[1],mod$coefficients[2], col = 'purple') #Extract slope and intercept from output of lm
+  
+  # Print correlation coefficient of the region
+  print(paste(regional_states[1], " correlation between hospitalizations and deaths: ", cor(x,y)))
+  
+  #legend("right", legend=states, col=colors);
+}
+```
+
+# Plot by region and place into nice grid
+```{r}
+fn <- c("Far North", "AK");
+ne <- c("North East", "CT", "IA", "IL", "IN", "KS", "MA", "ME", "MI", "MN", "MO", "ND", "NE",
+        "NH", "NJ", "NY", "OH", "PA", "RI", "SD", "VA", "VT", "WI", "WV");
+nw <- c("North West", "CO", "ID", "MT", "ND", "NE", "NV", "OR", "SD", "UT", "WA", "WY");
+se <- c("South East", "AL", "AR", "DE", "FL", "GA", "IL", "KS", "KY", "LA", "MD", "MO", "MS",
+        "NC", "OK", "SC", "TN", "TX");
+sw <- c("South West", "AZ", "CA", "NM", "NV", "OK", "TX");
+
+plot_region(fn);
+plot_region(ne);
+plot_region(nw);
+plot_region(se);
+plot_region(sw);
+
+```
+
+## Date Analysis (Chris Emm)
+
+- Correlation by Region:
+    * Far North:  
+        - Correlation coefficient is 0.995636769063713, so there is very strong, 
+          positive correlation between the increase in hospitalizations and the 
+          increase of deaths.
+                 
+        - Regression line on the plot is very strong in relation to the points
+          plotted on the graph.This shows that there is likely a strong
+          relationship between the two variables.
+  
+    * North East: 
+      - Correlation coefficient is 0.624749843439957, so there is a relatively
+        weak, positive correlation between the increase in hospitalizations and
+        the increase of deaths.This doesn't mean that there is no relationship,
+        but with the data that is reported we could likely presume that if
+        someone is sent to the hospital for Covid-19 in the North East, it is
+        not necessarily predicted that they will die.This could still be
+        attributed to lack of data being reported too.
+                 
+      - Regression line on the plot is very weak in relation to the points
+        plotted on the graph.This shows that there is likely a weak relationship
+        between the two variables.
+
+    * North West: 
+      - Correlation coefficient is 0.963956835015615, so there is very strong, 
+        positive correlation between the increase in hospitalizations and the
+        increase of deaths.
+      
+      - It appears that as hospitalizations increase towards the very end of the
+        graph (10,000+ hospitalizations), that the deaths have a little dip.
+        This is interesting becasue u would think that it might be harder to
+        save some lives if all the hospital beds are taken up, but it appears
+        that there could be a slight drop.
+        
+      - Regression line on the plot is very strong in relation to the points
+        plotted on the graph.This shows that there is likely a strong
+        relationship between the two variables.
+
+
+    * South East: 
+      - Correlation coefficient is 0.992256004818395, so there is very strong, 
+        positive correlation between the increase in hospitalizations and the
+        increase of deaths.
+      
+      - It appears that as hospitalizations increase, the deaths increase
+        linearly along with them.This is visible when looking at the plot with
+        its points nearly on top of the regression line. 
+        
+      - Regression line on the plot is very strong in relation to the points
+        plotted on the graph.This shows that there is likely a strong
+        relationship between the two variables. There is a few abnormalities
+        that could likely be outliers that are effecting the plot at the very
+        beginning of the graph,as those points are the only ones not practically
+        on top of the regression line.
+
+    * South West: 
+      - Correlation coefficient is 0.982338155758964, so there is very strong, 
+        positive correlation between the increase in hospitalizations and the 
+        increase of deaths.
+      
+      - There appear to be a lot of data stacked on top of each other, as the
+        lines at the beginning and end of the plot are thicker than the rest.
+        This makes it so that we don't see much data in the middle area of
+        hospitalizations/deaths. Because of this, it appears that a lot of
+        states have either low hospitalizations/low deaths, or high
+        hospitalizations/high deaths.
+        
+      - Regression line on the plot appears to be fairly strong for the majority
+        of the data. There are some data that may or may not be outliers based
+        off of how far they are off the regression line, however the majority
+        of the data is relatively close to the line and thus it appears that
+        there is a somewhat strong relationship (as the corr coeff. tells us)
+        
+                    
+- Overall:
+
+- 4 of the 5 regions that week looked at appeared to have a strong correlation
+  between hospitalizations and deaths. After analyzing the data we collected,
+  it brings forth some questions. 
+
+1) How accurate is the data in terms of is enough data being reported so that
+   some outliers aren't affecting the results too much?
+2) The North East had a relatively weak correlation. Possible reasons?
+      a) Some states might have people that come in even if they don't actually
+         need to be nursed back to help?
+      b) States with high hospitalizations seem to have the
+         "best hospitals" (3 of top 5 hospitals in US are in the North East)
+            - Mayo Clinic -> MN
+            - Cleaveland Clinic -> OH
+            - Massachusetts General Hospital -> MA
+      - This is likely becasue high hospitalization rates are in large cities
+        and large cities tend to have better hospitals
+      - So, maybe these "better hospitals give better care and have more
+        capacity (which is more care), and thus less people die?
+        
+- Other than that, overall it seems that there is a significant correlation
+  between the hospitalization rates and the death rates for people who have
+  gotten Covid-19.
+
+
+
+
+
+
+
+
