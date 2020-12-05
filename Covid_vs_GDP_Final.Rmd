@@ -8,8 +8,8 @@ output:
   pdf_document:
     toc: yes
 ---
-
-# Getting the Data
+# Exploration 4 - Country GDP vs COVID-19 Data
+## Getting the Data
 
 This script will download coronavirus source data from ourworldindata.org and it will prepare the dataset for analysis
 
@@ -56,7 +56,7 @@ print(paste("Saving processed data  -- ", save_filepath, sep=" "))
 write.csv(df_out, save_filepath, row.names = FALSE)
 ```
 
-# Visualizing the Data
+## Visualizing the Data
 We decided to look at total cases per million, total deaths per million, total cases, and total deaths for each country in our dataset. We compared these categories with GDP to determine if there was any relationship.
 
 ```{r}
@@ -101,7 +101,7 @@ abline(lm(y4~x))
 ```
 
 
-# Analysis
+## Analysis
 We gathered data for the GDP of each country in the COVID database and compared the GDP of the country to the number of deaths and cases they had. After doing some data visualization, we can conclude that there is little to no correlation between the GDP of a country and the number of COVID-19 cases or number of deaths due to COVID-19. For example, the correlation coefficient between GDP and COVID-19 cases per million is 0.52. The correlation coefficient for our other comparisons are all less than .25, signifying that there is little relation between the two. Furthermore, you can see the points are very spread out and have little relation (Plots 1-4). It is surprising because we expected some relationship; either those with lower GDP's would have more cases since their health care isn't as developed or those with higher GDP's would have more cases since there are more people in those countries.
 
 GDP vs …	            Correlation Coefficient  
