@@ -1,0 +1,14 @@
+We did not analyze the winter do to lack of data. For all of the seasons we analyzed: spring, summer, and fall they had strong positive correlation between 
+the number of new daily cases and the date/how long the virus has been active. The relationship appears to be linear for all of the seasons, the only distinction 
+is the rate at which new cases are increasing. There were 23,891 more new cases per at the end of spring, May 31st, than the beginning, March 1st, in the summer 
+there were 72,351 more new cases per day on August 31th than on June 1st, and in the fall there were 139,746 more new cases per day on November 30th than on 
+September 1st. The rate that the virus increased was 259.684783 cases per day in spring, 786.423913 cases per day in the summer, and 1,535.67033 cases per day in 
+the fall. This is noteworthy because there was a large increase in the number of daily cases around the world. Though each season independently seems linear, if we 
+put all the data together the total relationship between the number of new daily cases and time since the virus' inception, the relationship would appear to be 
+exponential. Overall, there is a strong positive correlation between the number of new daily cases and how long the virus has been active.
+
+The change by season in the rate of daily cases is most likely attributed to the highly contagious nature of the virus and not because of the season. Generally, 
+the warmer seasons have lower rate and rates of transmission of virus and other diseases.
+
+The data collected has varying levels of accuracy by region. Many regions do not report changes in cases daily even while the virus is very active, which is not 
+accurate. This can be explained by differing testing capacity by region.
