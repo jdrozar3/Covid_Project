@@ -1,5 +1,6 @@
 ---
 title: "Covid Project Exploration 2"
+author: Yair Bar - 116981699, Joshua Liu - 116566377, Raphael Metz - 116634595
 output: html_notebook
 ---
 
